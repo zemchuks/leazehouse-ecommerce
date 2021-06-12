@@ -11,7 +11,7 @@ const App = () => {
   return (
     <Router>
        <Fragment>
-        <Header />
+          <Header />  
           <main className='py-3'>
           <Container>
             <Route path='/' component={HomeScreen} exact />
