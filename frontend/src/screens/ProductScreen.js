@@ -1,27 +1,26 @@
-import React, { Fragment, useState, useEffect } from 'react'
+import React, { Fragment, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Col, Row, Image, ListGroup, Card, Button } from 'react-bootstrap' 
 import Rating from '../components/Rating'
+import { connect } from 'react-redux'
+import { listProductDetails } from '../redux/ActionCreators'
+import Message from '../components/Message'
+import Loader from '../components/Loader'
 
-const ProductScreen = ({ match }) => {
-    const [product, setProduct] = useState([])
+const ProductScreen = ({ match, productDetails: { product, error, loading }, listProductDetails }) => {
+  
 
     useEffect(() => {
-        const singleProduct = async () => {
-            const res = await fetch(`/api/products/${match.params.id}`)
-            const data  = await res.json();
-            setProduct(data)
-            console.log(data);
-        }
-        singleProduct()
+       
+        listProductDetails(match.params.id)
 
         // eslint-disable-next-line
     }, [])
 
     return (
         <Fragment>
-        <Link to='/' className='btn my-2 action-button shadow animate blue'>Go Back</Link>
-        <Row>
+        <Link to='/' className='btn btn-light'>Go Back</Link>
+        {loading ? <Loader /> : error ? <Message variant='danger'>{error}</Message> :  <Row>
             <Col md={6}>
                 <Image src={product.image} alt={product.name} fluid />
             </Col>
@@ -70,9 +69,14 @@ const ProductScreen = ({ match }) => {
                     </ListGroup>
                 </Card>
             </Col>
-        </Row>
+        </Row>}
+       
         </Fragment>
     )
 }
 
-export default ProductScreen
+const mapStateToProps = state => ({
+    productDetails: state.productDetails
+})
+
+export default connect(mapStateToProps, {listProductDetails})(ProductScreen)

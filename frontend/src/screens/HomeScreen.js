@@ -1,19 +1,15 @@
-import React, { useState, useEffect, Fragment } from 'react'
+import React, { useEffect, Fragment } from 'react'
 import { Row, Col } from 'react-bootstrap'
 import Product from '../components/Product'
+import Message from '../components/Message'
+import Loader from '../components/Loader'
+import { connect } from 'react-redux'
+import { listProducts } from '../redux/ActionCreators'
 
-const HomeScreen = () => {
-
-    const [products, setProducts] = useState([])
+const HomeScreen = ({ productList: { products, error, loading }, listProducts }) => {
 
     useEffect(() => {
-        const fetchProducts = async () => {
-            const res = await fetch('/api/products')
-            const data  = await res.json();
-            setProducts(data)
-            console.log(data);
-        }
-        fetchProducts()
+        listProducts()
         
         // eslint-disable-next-line
     }, [])  
@@ -21,15 +17,19 @@ const HomeScreen = () => {
     return (
         <Fragment>
            <h1>Latest Products</h1> 
-           <Row>
+           {loading ? (<Loader />) : error ? <Message variant='danger'>{error}</Message> : <Row>
                {products.map(product => (
                    <Col key={product._id} className='py-3' sm={12} md={6} lg={4} xl={3}>
                         <Product product={product}  />
                    </Col>
                ))}
-           </Row>
+           </Row>}
+          
         </Fragment>
     )
 }
 
-export default HomeScreen
+const mapStateToProps = state => ({
+    productList: state.productList
+})
+export default connect(mapStateToProps, { listProducts })(HomeScreen)
