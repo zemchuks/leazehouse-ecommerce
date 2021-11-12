@@ -3,13 +3,16 @@ import { Row, Col } from 'react-bootstrap'
 import Product from '../components/Product'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
-import { connect } from 'react-redux'
-import { listProducts } from '../redux/ActionCreators'
+import { useDispatch, useSelector } from 'react-redux'
+import { listProducts } from '../redux/actions/productActions'
 
-const HomeScreen = ({ productList: { products, error, loading }, listProducts }) => {
+const HomeScreen = () => {
+    const dispatch = useDispatch()
 
+    const productList = useSelector(state => state.productList)
+    const { products, error, loading } = productList
     useEffect(() => {
-        listProducts()
+        dispatch(listProducts())
         
         // eslint-disable-next-line
     }, [])  
@@ -29,7 +32,5 @@ const HomeScreen = ({ productList: { products, error, loading }, listProducts })
     )
 }
 
-const mapStateToProps = state => ({
-    productList: state.productList
-})
-export default connect(mapStateToProps, { listProducts })(HomeScreen)
+
+export default HomeScreen

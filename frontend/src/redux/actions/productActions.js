@@ -1,5 +1,5 @@
 import axios from 'axios'
-import * as types from './types'
+import * as types from '../types'
 
 // Get Products
 export const listProducts = () => async (dispatch) => {
