@@ -3,10 +3,10 @@ import { Link } from 'react-router-dom'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
 import { useSelector, useDispatch } from 'react-redux'
-import { Row, Col, ListGroup, Image, Form, Button, Card } from 'react-bootstrap'
-import { addToCart } from '../redux/actions/cartActions'
+import { Row, Col, ListGroup, Image, Form, Button, Card, ListGroupItem } from 'react-bootstrap'
+import { addToCart, removeFromCart } from '../redux/actions/cartActions'
 
-const CartScreen = ({ match, location}) => {
+const CartScreen = ({ match, location, history}) => {
     const productId = match.params.id
 
     const qty = location.search ? Number(location.search.split('=')[1]) : 1
@@ -24,8 +24,11 @@ const CartScreen = ({ match, location}) => {
             // eslint-disable-next-line
         }, [dispatch, productId, qty])
 
-        const removeFromCartHandler = () => {
-
+        const removeFromCartHandler = (id) => {
+            dispatch(removeFromCart(id))
+        }
+        const checkoutHandler = () => {
+            history.push('/login?redirect=shipping')
         }
 
     return (
@@ -37,10 +40,10 @@ const CartScreen = ({ match, location}) => {
                     </Link></Message>
                     ) : (
                         <ListGroup variant='flush'>{cartItems.map((item) => (
-                            <ListGroup.Item key={item.product}>
+                            <ListGroupItem key={item.product}>
                                 <Row>
                                     <Col md={2}>
-                                        <image src={item.image} alt={item.name} fluid rounded />
+                                        <Image src={item.image} alt={item.name} fluid rounded />
                                     </Col>
                                     <Col md={3}>
                                         <Link to={`/product/${item.product}`}>{item.name}</Link>
@@ -63,16 +66,26 @@ const CartScreen = ({ match, location}) => {
                                         </Button>
                                     </Col>
                                 </Row>
-                            </ListGroup.Item>
+                            </ListGroupItem>
                             ))}
                         </ListGroup>
                     )}
             </Col>
-            <Col md={2}>
-
-            </Col>
-            <Col md={2}>
-
+          
+            <Col md={4} mb='5'>
+                <Card>
+                    <ListGroup variant="flush">
+                        <ListGroupItem>
+                            <h2>Subtotal ({cartItems.reduce((accu, item) => accu + item.qty, 0)}) items</h2>
+                            ${cartItems.reduce((accu, item) => accu + item.qty * item.price, 0).toFixed(2)}
+                        </ListGroupItem>
+                        <ListGroupItem>
+                            <Button type='button' className="btn-block" disabled={cartItems === 0} onClick={checkoutHandler}>
+                                Proceed to checkout
+                            </Button>
+                        </ListGroupItem>
+                    </ListGroup>
+                </Card>
             </Col>
         </Row>
     )
@@ -80,3 +93,4 @@ const CartScreen = ({ match, location}) => {
 
 
 export default CartScreen
+ 

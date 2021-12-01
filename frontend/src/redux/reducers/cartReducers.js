@@ -7,7 +7,6 @@ const initialState = {
 export const cartReducer = (state = initialState, action) => {
   switch (action.type) {
     case types.CART_ADD_ITEM:
-      // payload
       const item = action.payload
 
       // check if item already exist in cart,
@@ -25,7 +24,11 @@ export const cartReducer = (state = initialState, action) => {
           cartItems: [...state.cartItems, item],
         }
       }
-
+    case types.CART_REMOVE_ITEM:
+      return {
+        ...state,
+        cartItems: state.cartItems.filter((x) => x.product !== action.payload)
+      }
     default:
       return state
   }
