@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { listProducts } from '../redux/actions/productActions'
 
 const HomeScreen = () => {
-    const dispatch = useDispatch()
+    const dispatch = useDispatch() 
 
     const productList = useSelector(state => state.productList)
     const { products, error, loading } = productList
